@@ -1,0 +1,8 @@
+<openplc>
+  <communication>
+    <modbus_tcp>
+      <ip>0.0.0.0</ip>
+      <port>502</port>
+    </modbus_tcp>
+  </communication>
+</openplc>

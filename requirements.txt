@@ -1,0 +1,25 @@
+# Modbus & networking
+pymodbus
+scapy
+mitmproxy
+
+# PCAP parsing
+pyshark
+
+# Logging & hashing
+cryptography
+
+# Data handling & ML
+pandas
+numpy
+scikit-learn
+tensorflow
+shap
+joblib
+
+# Dashboard & realtime UI
+dash
+flask-socketio
+
+# Utility
+python-dotenv
