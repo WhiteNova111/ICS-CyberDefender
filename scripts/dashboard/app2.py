@@ -1113,14 +1113,27 @@ def generate_anomaly_timeline(anomalies_df):
         # Sort by timestamp
         sorted_df = anomalies_df.sort_values('timestamp')
         
-        # Create scatter plot
+        # Create hovertext with safe formatting
+        hovertext = []
+        for ts, score, r0, r1 in zip(sorted_df['timestamp'], sorted_df['score'], 
+                                    sorted_df['reg0'], sorted_df['reg1']):
+            try:
+                time_str = ts.strftime('%Y-%m-%d %H:%M:%S') if pd.notnull(ts) else "N/A"
+            except (AttributeError, TypeError):
+                time_str = "N/A"
+            score_str = f"{score:.3f}" if pd.notnull(score) else "N/A"
+            r0_str = f"{r0:.2f}" if pd.notnull(r0) else "N/A"
+            r1_str = f"{r1:.2f}" if pd.notnull(r1) else "N/A"
+            hovertext.append(f"Time: {time_str}<br>Score: {score_str}<br>Reg0: {r0_str}, Reg1: {r1_str}")
+        
+        # Create scatter plot with safe value handling
         fig.add_trace(go.Scatter(
             x=sorted_df['timestamp'],
-            y=sorted_df['score'],
+            y=sorted_df['score'].fillna(0),  # Fill NaN scores with 0
             mode='markers',
             marker=dict(
-                size=sorted_df['score'] * 5,  # Size proportional to score
-                color=sorted_df['score'],
+                size=sorted_df['score'].fillna(0) * 5,  # Fill NaN scores with 0 for size
+                color=sorted_df['score'].fillna(0),  # Fill NaN scores with 0 for color
                 colorscale='Reds',
                 showscale=True,
                 colorbar=dict(title='Score'),
@@ -1128,9 +1141,7 @@ def generate_anomaly_timeline(anomalies_df):
             ),
             name='Anomalies',
             hoverinfo='text',
-            hovertext=[f"Time: {ts.strftime('%Y-%m-%d %H:%M:%S')}<br>Score: {score:.3f}<br>Reg0: {r0:.2f}, Reg1: {r1:.2f}" 
-                      for ts, score, r0, r1 in zip(sorted_df['timestamp'], sorted_df['score'], 
-                                                  sorted_df['reg0'], sorted_df['reg1'])]
+            hovertext=hovertext
         ))
     
     # Layout
